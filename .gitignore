@@ -1,0 +1,44 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+
+# --- Node ---
+node_modules/
+
+# --- Secrets: signing keys are generated per-run, never committed ---
+*.key
+*.pem
+
+# --- Generated benchmark output (regenerate with ./run.sh) ---
+bench/out/
+bench/{out}/
+
+# --- Corpus: ALL of it is large and reproducible. Nothing here is source. ---
+# Synthetic disk images + ground truth: regenerate with corpus/generate/synthetic.py
+corpus/images/
+corpus/manifests/
+# NTFS work images: regenerate with the erase/ demo scripts
+corpus/ntfs/
+corpus/ntfs_probe/
+corpus/ntfs_residue/
+# Third-party downloads: NIST CFReDS and govdocs1 (see docs for fetch instructions)
+corpus/cfreds/
+corpus/cfreds_raw/
+corpus/govdocs_raw/
+
+# The only corpus content that IS source:
+!corpus/generate/
+!corpus/*.py
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+*.swp

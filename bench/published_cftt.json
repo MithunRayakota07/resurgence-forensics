@@ -1,0 +1,102 @@
+{
+  "_about": "Published NIST/CFTT results, transcribed verbatim from the DHS test reports. These are NOT our measurements: NIST ran these tools, on NIST hardware, on the CFReDS 'File Carving Graphic Files' (2023) corpus. We reproduce them only so our own numbers can sit beside them with the provenance made explicit. Every 'verdict' field below is a direct quote or a close paraphrase of the report's Observations and Anomalies section.",
+  "_corpus": "NIST CFReDS 'File Carving Graphic Files' (2023)",
+  "_layout_note": "Every CFTT layout is fragmented IN ORDER. Out-of-order fragmentation is not covered by this benchmark at all.",
+  "_test_design": "Six source files per format per layout. Formats: HEIC, PNG, JPG, BMP, TIFF, GIF. Layouts: contiguous (sector-aligned), non-aligned, fragmented (sector-aligned, benign fill inserted between fragments).",
+  "_we_cannot_rerun": "We hold no licences for AXIOM, FTK, Forensic Explorer or R-Studio, so these rows can never be re-measured by us. Treat them as cited literature, not as experimental results of ours.",
+
+  "tools": [
+    {
+      "tool": "Magnet AXIOM",
+      "version": "7.5.0.37231",
+      "tested": "2024-07-27",
+      "report": "https://www.dhs.gov/sites/default/files/2024-09/24_0919_st_test_results_for_graphic_file_carving_tool_magnet_axiom_7.5.0.37231_0.pdf",
+      "fragmented": {
+        "JPG": {"reassembles": false, "verdict": "carved files included all the fragments and the fill between fragments"},
+        "PNG": {"reassembles": false, "verdict": "carved files included all the fragments and the fill between fragments"},
+        "BMP": {"reassembles": false, "verdict": "only three of six carved; included fill between fragments and missing the same amount from the end"},
+        "GIF": {"reassembles": false, "verdict": "only two of six completely carved; included fill; remaining four missing 23% to 97% of blocks"},
+        "TIFF": {"reassembles": false, "verdict": "six false positives (.BIN) returned"},
+        "HEIC": {"reassembles": false, "verdict": "nothing carved from any layout"}
+      }
+    },
+    {
+      "tool": "FTK",
+      "version": "8.0",
+      "tested": "2024-01",
+      "report": "https://www.dhs.gov/sites/default/files/2024-09/24_0919_st_test_results_for_graphic_file_carving_tool_ftk_v8.0_0.pdf",
+      "fragmented": {
+        "JPG": {"reassembles": false, "verdict": "carved JPG files included all fragments plus the fill between fragments"},
+        "PNG": {"reassembles": false, "verdict": "included just the first fragment plus some fill (2 to 13 blocks) and one block of unknown content"},
+        "TIFF": {"reassembles": false, "verdict": "TIFF files were carved from the fragmented layout"},
+        "BMP": {"reassembles": false, "verdict": "see report"},
+        "GIF": {"reassembles": false, "verdict": "see report"},
+        "HEIC": {"reassembles": false, "verdict": "see report"}
+      }
+    },
+    {
+      "tool": "Autopsy",
+      "version": "4.21.0",
+      "tested": "2024-02",
+      "report": "https://www.dhs.gov/sites/default/files/2024-09/24_0919_st_test_results_for_graphic_file_carving_tool_autopsy_4.21.0_0.pdf",
+      "fragmented": {
+        "JPG": {"reassembles": false, "verdict": "carved files included all the fragments and the fill between fragments"},
+        "TIFF": {"reassembles": false, "verdict": "carved files included all the fragments and the fill between fragments"},
+        "GIF": {"reassembles": false, "verdict": "similar, but only one of six files was carved"},
+        "PNG": {"reassembles": false, "verdict": "only three of six carved; included all fragments, the fill between them, and the fill after the last fragment"},
+        "BMP": {"reassembles": false, "verdict": "included fill between fragments and missing the same amount of content from the end"},
+        "HEIC": {"reassembles": false, "verdict": "included fill between fragments and missing the same amount of content from the end"}
+      },
+      "other": "Nothing was carved from the non-aligned layouts."
+    },
+    {
+      "tool": "R-Studio T80+",
+      "version": "9.3.191230",
+      "tested": "2024-07-29",
+      "report": "https://www.dhs.gov/sites/default/files/2024-09/24_0919_st_test_report_for_graphic_file_carving_tool_r-studio_t80_9.3.191230_0.pdf",
+      "fragmented": {
+        "JPG": {"reassembles": false, "verdict": "carved files included all the fragments and the fill between fragments"},
+        "BMP": {"reassembles": false, "verdict": "included fill between fragments and missing the same amount of content from the end"},
+        "PNG": {"reassembles": false, "verdict": "carved files included only the first fragment and some of the fill following it"},
+        "GIF": {"reassembles": false, "verdict": "only the first fragment, the fill between first and second, and some of the second"},
+        "TIFF": {"reassembles": false, "verdict": "nothing was carved"},
+        "HEIC": {"reassembles": false, "verdict": "nothing was carved from any of the three layouts"}
+      },
+      "other": "None of the source files were carved from the non-aligned layouts."
+    },
+    {
+      "tool": "Forensic Explorer",
+      "version": "5.6.8.4340",
+      "tested": "2025-03",
+      "report": "https://www.dhs.gov/sites/default/files/2025-03/25_0324_st_test_report_for_graphic_file_carving_tool-forensic_explorer_v5.6.8.4340.pdf",
+      "fragmented": {
+        "JPG": {"reassembles": false, "verdict": "carved files included all the fragments and the fill between fragments"},
+        "GIF": {"reassembles": false, "verdict": "carved files included all the fragments and the fill between fragments"},
+        "HEIC": {"reassembles": false, "verdict": "included fill between fragments and missing the same amount of content from the end"},
+        "BMP": {"reassembles": false, "verdict": "included fill between fragments and missing the same amount of content from the end"},
+        "PNG": {"reassembles": false, "verdict": "carved files included only the first fragment and some of the fill following it"},
+        "TIFF": {"reassembles": false, "verdict": "none carved; one false positive (.HPGL) was carved"}
+      }
+    }
+  ],
+
+  "other_evidence": [
+    {
+      "tool": "X-Ways Forensics",
+      "kind": "vendor documentation",
+      "verdict": "file carving 'generally assumes contiguous file clusters, so it produces corrupt files in case the files were originally stored in a fragmented way'"
+    },
+    {
+      "tool": "EnCase Forensic",
+      "version": "7.09.05",
+      "kind": "earlier CFTT corpus (40 files, 10 contiguous + 30 sequentially fragmented)",
+      "verdict": "10 of 40 viewable-complete, 11 viewable-incomplete, 10 not-viewable, plus 9,054 false-positive BMP and 33 false-positive TIFF files"
+    },
+    {
+      "tool": "X-Ways Forensics",
+      "version": "17.6",
+      "kind": "earlier CFTT corpus (40 files)",
+      "verdict": "23 of 40 viewable-complete, 18 viewable-incomplete"
+    }
+  ]
+}

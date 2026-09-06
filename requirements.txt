@@ -1,0 +1,10 @@
+# Phase 0
+numpy>=1.26
+pillow>=10.0
+fastapi>=0.110
+uvicorn>=0.27
+
+# Phase 1 (not used yet)
+# torch
+# faiss-cpu
+# networkx
