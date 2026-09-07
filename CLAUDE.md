@@ -592,6 +592,18 @@ Console entry points: `sutra-carve`, `sutra-erase-drive`,
 `sutra-bench`. FastAPI/uvicorn are the `[api]` extra and pytest is `[dev]`, so
 a plain install does not drag in a web server.
 
+**Tests.** `pip install -e ".[dev]"`, then:
+
+```bash
+pytest -m "not slow"     # fast: decoder, priors, blocks, erase safety, certs
+pytest                   # adds the end-to-end byte-exact carves
+```
+
+The slow marker covers the real-disk-image carves; they skip themselves if
+`corpus/images/` has not been generated. The erase-safety tests are the ones
+to care about — they are what keeps "loopback images only, dry-run by default"
+a property of the code rather than of the documentation.
+
 **Reproducing the benchmark** additionally needs **Node 18+** and **WSL
 Ubuntu** with `testdisk foremost scalpel` installed (that's where the baseline
 carvers live; they are Linux-only).
@@ -642,7 +654,8 @@ checkout.
 | `carve/priors/base.py` | Allocation priors: `LocalityPrior` and `UniformPrior` (ablation control) |
 | `carve/beam.py` | Constrained beam search over cluster sequences — the core algorithm |
 | `carve/carver.py` | Top-level entry point and CLI; finds headers, carves each file |
-| `bench/test_decoder.py` | Decoder self-test — run this first, everything downstream depends on it |
+| `tests/` | The pytest suite. `pytest -m "not slow"` for the fast pass; plain `pytest` adds the end-to-end carves |
+| `bench/test_decoder.py` | Decoder self-test as a READABLE REPORT — prints the DC separation numbers. The assertions inside it are also in `tests/test_jpeg_decoder.py`, which is what CI runs |
 | `bench/run_baselines.py` | Runs the real PhotoRec / Foremost / Scalpel binaries via WSL |
 | `bench/score.py` | Ground-truth scoring — **the only place SHA-256 comparison is allowed** |
 | `bench/report.py` | Builds the comparison table and `report.json` that the UI reads |

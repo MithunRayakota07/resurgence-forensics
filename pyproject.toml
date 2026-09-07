@@ -16,6 +16,10 @@ keywords = ["forensics", "file-carving", "data-recovery", "secure-erase", "nist-
 dependencies = [
     "numpy>=1.26",
     "pillow>=10.0",
+    # Ed25519 signing for the sanitization certificate chain. NOT optional:
+    # erase/certificate.py falls back to writing UNSIGNED records when this is
+    # missing, which would make "signed certificate" a false claim.
+    "pynacl>=1.5",
 ]
 
 [project.optional-dependencies]
@@ -36,6 +40,16 @@ sutra-erase-metadata = "erase.metadata:main"
 sutra-erase-residue = "erase.wipe_residue:main"
 sutra-gen-corpus = "corpus.generate.synthetic:main"
 sutra-bench = "bench.report:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# tests/ imports conftest helpers directly, and the packages under test are
+# installed, so the rootdir is all that needs to be importable.
+pythonpath = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: end-to-end carves over real disk images (tens of seconds each)",
+]
 
 [tool.setuptools]
 # Listed explicitly rather than auto-discovered: the repo root also holds

@@ -56,6 +56,21 @@ npm install --prefix web
 ```
 *Installs React and Vite for the user interface.*
 
+### 1.1b Check it works before you change anything
+
+```bash
+pytest -m "not slow"
+```
+*A few seconds. Covers the JPEG decoder, the allocation priors, the cluster
+view, the erase safety interlocks and the certificate chain. If this is red,
+fix that before anything else — everything downstream sits on top of it.*
+
+```bash
+pytest
+```
+*Adds the end-to-end carves of the real disk images, which take a couple of
+minutes. These skip themselves if you have not generated `corpus/images/` yet.*
+
 ### 1.2 Every time — the full run
 
 ```bash

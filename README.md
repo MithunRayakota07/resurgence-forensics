@@ -175,6 +175,19 @@ sutra-carve corpus/images/hard.img --out recovered/
 erasure side; all three are dry-run by default and refuse anything that is not
 a regular file. `sutra-gen-corpus` rebuilds the test disk images.
 
+## Tests
+
+```bash
+pip install -e ".[dev]"
+pytest -m "not slow"
+```
+
+Covers the JPEG decoder against truncation and foreign data, the allocation
+priors and the integrity of the ablation control, the cluster view, the
+certificate hash chain, and the erase-side safety interlocks. Plain `pytest`
+additionally carves the real disk images end-to-end and checks the results
+byte-exact against ground truth.
+
 ## Reproducing the benchmark
 
 The comparison table additionally needs Node 18+ for the UI and WSL Ubuntu with
