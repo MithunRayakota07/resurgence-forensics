@@ -55,7 +55,7 @@ whether anyone ever reads the engineering.
 
 | # | step | why it matters |
 |---|---|---|
-| A1 | **Rename to Tessera** — 42 references, 14 files | A tessera is one tile of a mosaic; reassembling scattered tesserae is literally the carver. "SUTRA" reads wrong and collides with an LLM. |
+| A1 | **Rename to Tessera** — done, 49 references across 15 files | A tessera is one tile of a mosaic; reassembling scattered tesserae is literally what the carver does. The old name read wrong and collided with a well-known LLM. |
 | A2 | **Rewrite the README** — short, one honest claim, a screenshot of the live fragment graph | The single highest-leverage item. A reviewer gives it 60 seconds. Right now they meet 245 lines and no picture. |
 | A3 | **Add MIT LICENSE** | A public repo with no licence legally means nobody may use it. |
 | A4 | **Strip SIH artifacts** — `docs/slide-wording.md`, the competition and team-rules sections, the 55%-effort cap | Dead weight that dates the project to a contest it has left. |

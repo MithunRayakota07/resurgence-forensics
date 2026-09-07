@@ -117,7 +117,7 @@ export default function App() {
       <header className="top">
         <div>
           <div className="brand">
-            <h1>SUTRA</h1>
+            <h1>Tessera</h1>
             <div className="sub">Fragment Reassembly Engine</div>
           </div>
           <div className="tagline">sequencing, not classification · phase 0 prototype</div>
@@ -222,7 +222,7 @@ export default function App() {
           <div className="grid4">
             {[
               ...baselines.map((b) => ({ tool: TOOL_LABEL[b.tool] || b.tool, v: b.per_file[t.name], ours: false })),
-              { tool: 'SUTRA', v: ours?.per_file[t.name], ours: true },
+              { tool: 'Tessera', v: ours?.per_file[t.name], ours: true },
             ].map(({ tool, v, ours: isOurs }) => {
               const vd = verdict(v)
               return (
@@ -268,7 +268,7 @@ export default function App() {
                 const isOurs = tl.tool.startsWith('ours')
                 return (
                   <tr key={tl.tool} className={isOurs ? 'us' : ''}>
-                    <td className="tool">{isOurs ? 'SUTRA (beam + validator + prior)' : (TOOL_LABEL[tl.tool] || tl.tool)}</td>
+                    <td className="tool">{isOurs ? 'Tessera (beam + validator + prior)' : (TOOL_LABEL[tl.tool] || tl.tool)}</td>
                     <td style={{ color: tl.exact === img.truth.length ? '#00E5A0' : tl.exact ? '#FFB020' : '#FF4D6A' }}>
                       {tl.exact} / {img.truth.length}
                     </td>

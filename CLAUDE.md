@@ -1,4 +1,4 @@
-# CLAUDE.md — SUTRA project memory
+# CLAUDE.md — Tessera project memory
 
 This file is the project's memory. If you are a new teammate, or a fresh AI
 session, read this before touching anything. It should give you the full
@@ -48,7 +48,7 @@ superseded. Do not quote 7.6 s or 16.1 s anywhere.
 
 | tool | byte-exact | time | result |
 |---|---|---|---|
-| **SUTRA** | **1 / 1** | **67.5 s** | byte-exact |
+| **Tessera** | **1 / 1** | **67.5 s** | byte-exact |
 | PhotoRec + brute force | 0 / 1 | 1.6 s | nothing recovered |
 | PhotoRec (default) | 0 / 1 | 1.4 s | nothing recovered |
 | Foremost | 0 / 1 | 0.9 s | corrupt, SSIM 0.59 |
@@ -58,7 +58,7 @@ superseded. Do not quote 7.6 s or 16.1 s anywhere.
 
 | tool | byte-exact | time |
 |---|---|---|
-| **SUTRA** | **2 / 2** | **118.2 s** |
+| **Tessera** | **2 / 2** | **118.2 s** |
 | PhotoRec + brute force | 1 / 2 | 257.9 s |
 | PhotoRec (default) | 0 / 2 | 1.6 s |
 | Foremost | 0 / 2 | 14.7 s |
@@ -237,7 +237,7 @@ JPEG validator plus beam search.
 
 ## 5b. The NIST result (23 Aug) — read this before touching the carver
 
-**SUTRA scores 0 / 6 byte-exact on the NIST CFReDS fragmented-JPG image.**
+**Tessera scores 0 / 6 byte-exact on the NIST CFReDS fragmented-JPG image.**
 Our own images still pass byte-exact. Both facts matter.
 
 **Update 23 Aug (second attempt).** Still 0/6, but the failure changed shape and
@@ -584,12 +584,12 @@ package (`pyproject.toml`), and core dependencies are NumPy and Pillow:
 
 ```bash
 pip install -e .
-sutra-carve corpus/images/hard.img --out recovered/
+tessera-carve corpus/images/hard.img --out recovered/
 ```
 
-Console entry points: `sutra-carve`, `sutra-erase-drive`,
-`sutra-erase-metadata`, `sutra-erase-residue`, `sutra-gen-corpus`,
-`sutra-bench`. FastAPI/uvicorn are the `[api]` extra and pytest is `[dev]`, so
+Console entry points: `tessera-carve`, `tessera-erase-drive`,
+`tessera-erase-metadata`, `tessera-erase-residue`, `tessera-gen-corpus`,
+`tessera-bench`. FastAPI/uvicorn are the `[api]` extra and pytest is `[dev]`, so
 a plain install does not drag in a web server.
 
 **Tests.** `pip install -e ".[dev]"`, then:
@@ -636,7 +636,7 @@ project's dev server is a confusing way to lose an evening.
 
 **Git.** Initialised 7 Sept 2026, default branch `main`. Everything under
 `corpus/` is gitignored — it is 4.9 GB and fully reproducible (synthetic images
-from `sutra-gen-corpus`, CFReDS and govdocs1 by download). `.gitattributes`
+from `tessera-gen-corpus`, CFReDS and govdocs1 by download). `.gitattributes`
 pins `*.sh` to LF so the shell scripts keep working under WSL on a Windows
 checkout.
 

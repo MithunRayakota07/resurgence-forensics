@@ -9,7 +9,7 @@ hard.img separately for every assertion tripled the runtime for no extra
 coverage.
 
 These skip themselves when corpus/images is absent, since it is gitignored.
-Regenerate with `sutra-gen-corpus`.
+Regenerate with `tessera-gen-corpus`.
 
 The uniform-prior half of the ablation is deliberately NOT here: the control
 takes ~29 minutes because the search explodes without the prior, which is the

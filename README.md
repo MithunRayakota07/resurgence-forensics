@@ -1,4 +1,4 @@
-# SUTRA — Fragment Reassembly Engine
+# Tessera — Fragment Reassembly Engine
 
 **Phase 0 prototype.** Recovers fragmented JPEGs from raw disk images that
 PhotoRec, Foremost and Scalpel cannot.
@@ -30,7 +30,7 @@ baseline. Reproduce with `./run.sh`.
 
 | tool | byte-exact | time | EVIDENCE-A | EVIDENCE-B |
 |---|---|---|---|---|
-| **SUTRA** | **2 / 2** | **118.2 s** | **EXACT** | **EXACT** |
+| **Tessera** | **2 / 2** | **118.2 s** | **EXACT** | **EXACT** |
 | PhotoRec + brute force | 1 / 2 | 257.9 s | EXACT | nothing recovered |
 | PhotoRec (default) | 0 / 2 | 1.6 s | nothing recovered | nothing recovered |
 | Foremost | 0 / 2 | 14.7 s | nothing recovered | corrupt, ssim 0.61 |
@@ -40,7 +40,7 @@ baseline. Reproduce with `./run.sh`.
 
 | tool | byte-exact | time | EVIDENCE-C |
 |---|---|---|---|
-| **SUTRA** | **1 / 1** | **67.5 s** | **EXACT** |
+| **Tessera** | **1 / 1** | **67.5 s** | **EXACT** |
 | PhotoRec + brute force | 0 / 1 | 1.6 s | nothing recovered |
 | PhotoRec (default) | 0 / 1 | 1.4 s | nothing recovered |
 | Foremost | 0 / 1 | 0.9 s | corrupt, ssim 0.59 |
@@ -168,12 +168,12 @@ pip install -e .
 That gives you the command-line tools:
 
 ```bash
-sutra-carve corpus/images/hard.img --out recovered/
+tessera-carve corpus/images/hard.img --out recovered/
 ```
 
-`sutra-erase-drive`, `sutra-erase-metadata` and `sutra-erase-residue` are the
+`tessera-erase-drive`, `tessera-erase-metadata` and `tessera-erase-residue` are the
 erasure side; all three are dry-run by default and refuse anything that is not
-a regular file. `sutra-gen-corpus` rebuilds the test disk images.
+a regular file. `tessera-gen-corpus` rebuilds the test disk images.
 
 ## Tests
 

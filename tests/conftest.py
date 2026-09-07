@@ -52,5 +52,5 @@ def require_image(name: str) -> str:
     """Skip rather than fail when the generated corpus is not present."""
     path = os.path.join(images_dir(), name)
     if not os.path.exists(path):
-        pytest.skip("%s not generated; run `sutra-gen-corpus` to enable" % name)
+        pytest.skip("%s not generated; run `tessera-gen-corpus` to enable" % name)
     return path
