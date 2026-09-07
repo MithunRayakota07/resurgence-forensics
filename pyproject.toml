@@ -39,6 +39,8 @@ tessera-erase-drive = "erase.drive:main"
 tessera-erase-metadata = "erase.metadata:main"
 tessera-erase-residue = "erase.wipe_residue:main"
 tessera-gen-corpus = "corpus.generate.synthetic:main"
+tessera-gen-real = "corpus.generate.real_photos:main"
+tessera-success-rate = "bench.success_rate:main"
 tessera-bench = "bench.report:main"
 
 [tool.pytest.ini_options]
