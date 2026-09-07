@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# A new push to the same branch makes the previous run irrelevant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------
+  # Fast suite, across the Python versions and platforms we claim to support.
+  # Windows is here on purpose: development happens there, block devices do
+  # not exist there (the safety tests account for it), and the shell scripts
+  # depend on .gitattributes keeping LF endings on checkout.
+  # ---------------------------------------------------------------------
+  test:
+    name: ${{ matrix.os }} / Python ${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: "3.11"}
+          - {os: ubuntu-latest, python: "3.12"}
+          - {os: ubuntu-latest, python: "3.13"}
+          - {os: windows-latest, python: "3.11"}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[api,dev]"
+
+      - name: Test
+        run: pytest -m "not slow"
+
+  # ---------------------------------------------------------------------
+  # The headline claim, checked for real: carve the benchmark images and
+  # compare against ground truth byte for byte.
+  #
+  # corpus/ is gitignored (4.9 GB) but the synthetic images are deterministic
+  # from a seed and take ~2 s to build, so CI regenerates them rather than
+  # storing them. Same seed, same SHA-256 as a local run.
+  # ---------------------------------------------------------------------
+  end-to-end:
+    name: byte-exact recovery
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Generate the benchmark disk images
+        run: sutra-gen-corpus
+
+      - name: Decoder self-test
+        run: python bench/test_decoder.py
+
+      - name: Carve and verify byte-exact
+        run: pytest -m slow
+
+  # ---------------------------------------------------------------------
+  # "Deployable" means the package actually builds and is well-formed, not
+  # just that it imports from a source checkout.
+  # ---------------------------------------------------------------------
+  package:
+    name: build distributions
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Build sdist and wheel
+        run: |
+          pip install build twine
+          python -m build
+
+      - name: Check metadata
+        run: twine check dist/*
+
+      - name: Install the built wheel in a clean environment
+        run: |
+          python -m venv /tmp/fresh
+          /tmp/fresh/bin/pip install dist/*.whl
+          /tmp/fresh/bin/sutra-carve --help
