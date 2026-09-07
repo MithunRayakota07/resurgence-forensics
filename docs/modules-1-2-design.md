@@ -1,9 +1,9 @@
 # Modules 1 & 2 — Secure Erasure, design
 
-SIH26149 requires three modules. We have built part of module 3 (carving). This
-document specifies modules 1 and 2 and, more importantly, says which parts are
-ordinary engineering and which parts are actually novel — so nobody on the team
-oversells the easy half.
+The project has three capabilities; carving is the third and was built first.
+This document specifies the other two — drive-level sanitisation and selective
+erasure — and, more importantly, says which parts are ordinary engineering and
+which parts are actually novel, so the easy half never gets oversold.
 
 Everything normative below is taken from primary sources, read directly:
 **NIST SP 800-88r2** (September 2025, 48 pp.) and the standards it defers to.

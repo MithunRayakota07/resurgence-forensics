@@ -4,31 +4,28 @@ This file is the project's memory. If you are a new teammate, or a fresh AI
 session, read this before touching anything. It should give you the full
 picture without anyone re-explaining it.
 
-**Last updated:** 23 August 2026, end of Phase 0.
+**Last updated:** 8 September 2026.
 
 ---
 
-## 1. The competition
+## 1. What this is
 
-**Smart India Hackathon 2026**, problem statement **SIH26149 (NTRO)** —
-*"Design and Development of an Integrated Secure Data Erasure and Advanced
-File Recovery Tool."*
+Three capabilities, built to work together on a raw disk image:
 
-Three modules are **required** by the problem statement:
-
-1. Drive-level sanitisation with verified audit trails (NIST SP 800-88)
+1. Drive-level sanitisation with verified audit trails (NIST SP 800-88r2)
 2. Selective file/folder erasure with metadata scrubbing
-3. Forensic file carving from formatted/corrupted media with confidence scoring
+3. Forensic file carving from formatted or corrupted media, with a
+   confidence score
 
-**Key dates**
-- **20 September 2026** — national idea submission deadline
-- ~October 2026 — expert screening
-- **December 2026** — Grand Finale, 36-hour build (that is a *polish* window,
-  not a build-from-scratch window; the thing must already exist)
+The project began as an entry for Smart India Hackathon 2026 (problem
+statement SIH26149, NTRO) and the three-module shape is inherited from that
+statement. **It is no longer a competition entry**, and the hackathon's
+deadlines, team rules and effort quotas no longer constrain anything. See
+`docs/ROADMAP.md` for what the project is aiming at now.
 
-**Team rules:** exactly 6 students, at least one female member, plus a faculty
-mentor. As of this writing the team is **not yet formed** — recruitment is
-happening off the Phase 0 demo.
+That history matters in one place only: the modules are three because a
+problem statement said three, not because a lone designer chose it. Do not
+treat the split as sacred if a better shape appears.
 
 ---
 
@@ -198,12 +195,11 @@ Corrected answer:
 > pass-through), or the magnetic drives still widely deployed in government,
 > NAS and CCTV estates. And TRIM never fires on **corruption** — a lost
 > partition table, filesystem structure damage, or ransomware leaves the data
-> physically intact with only the metadata destroyed. That is what "formatted
-> or corrupted media" means in our problem statement: a metadata problem, not
-> a deletion problem.
+> physically intact with only the metadata destroyed. Carving from formatted
+> or corrupted media is a metadata problem, not a deletion problem.
 
-Lead with the **corruption** argument; it is the strongest and it maps directly
-onto the problem statement's own words.
+Lead with the **corruption** argument; it is the strongest, and it is the case
+where carving is the only option left.
 
 Do **not** claim phones — mobile UFS/eMMC use discard and are largely out of
 scope. Do **not** claim reformat. "Magnetic drives common in Indian government
@@ -544,12 +540,13 @@ these, read the comment first.
 - **NIST SP 800-88 Rev. 2** (Sept 2025). Rev. 1 was withdrawn the same day —
   do not cite it.
 - **No blockchain.** Signed Ed25519 hash chain instead. Rationale: blockchain
-  only adds value across mutually distrusting parties; our certificate has one
-  issuer. A previous SIH team pitched blockchain-anchored wipe certificates and
-  it reads as decoration. Have this rationale ready as a slide.
-- **The carver is capped at 55% of total effort.** Modules 1 and 2 are required
-  marks we cannot afford to drop. A team with three solid modules beats a team
-  with one brilliant module and two stubs.
+  only adds value across mutually distrusting parties; a sanitization
+  certificate has exactly one issuer. Blockchain-anchored wipe certificates
+  are a recurring proposal in this space and they read as decoration. Keep
+  this rationale to hand — it gets asked.
+- **Keep the three capabilities roughly balanced.** The carver is the
+  interesting one and will happily absorb all available time. Three solid
+  capabilities are worth more than one brilliant one beside two stubs.
 - **Split train/test by source file and by corpus, never by block.** Blocks
   from the same file leaking across the split will hand you a fake 99%.
 - **SHA-256 ground-truth comparison is evaluation-only, never a runtime
@@ -670,7 +667,11 @@ checkout.
 | `erase/validate.py` | SP 800-88r2 4.5.2 validation — a verdict that can REJECT |
 | `erase/certificate.py` | Appendix C certificate, Ed25519, hash-chained |
 | `erase/demo_residue.py` | The end-to-end residue demonstration |
-| `erase/` | Phase 3 — erasure and adversarial verification. Empty. |
+| `erase/drive.py` | Drive-level sanitisation: technique selection, certificate, adversarial re-scan |
+| `erase/metadata.py` | Metadata scrubbing |
+| `corpus/generate/real_photos.py` | Builds disk images from REAL photographs, with other real photos as decoy filler |
+| `bench/success_rate.py` | Byte-exact success rate over randomised out-of-order layouts |
+| `LICENSE` | MIT |
 
 ---
 

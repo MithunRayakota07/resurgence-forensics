@@ -8,6 +8,9 @@ version = "0.1.0"
 description = "Fragment-reassembly file carving and SP 800-88r2 secure erasure for raw disk images"
 readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Mithun Rayakota"}]
 keywords = ["forensics", "file-carving", "data-recovery", "secure-erase", "nist-sp-800-88"]
 
 # Core carving needs only these two. The web API, the benchmark harness and

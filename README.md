@@ -17,7 +17,8 @@ works and where it does not.**
 
 Plus an allocation prior, ablatable, on both paths.
 
-SIH26149 (NTRO) — *Integrated Secure Data Erasure and Advanced File Recovery Tool*.
+Alongside the carver: drive-level sanitisation to NIST SP 800-88r2, deleted-file
+residue detection and erasure, and signed hash-chained certificates.
 
 ---
 
@@ -146,14 +147,16 @@ measuring nothing. The separation is mechanical, not a matter of discipline.
 ## Layout
 
 ```
-corpus/generate/   disk image generator + ground-truth manifests
+corpus/generate/   disk image generators (synthetic and real-photograph)
 carve/validators/  format decoders used as hard constraints
 carve/priors/      allocation priors (ablatable)
 carve/beam.py      constrained beam search
+erase/             sanitisation, residue detection, SP 800-88r2 certificates
+model/             learned-adjacency study (not used by the carver)
 bench/             scoring harness, real baseline runners, comparison report
+tests/             pytest suite
 api/               FastAPI, streams the live search trace
 web/               React + Vite UI
-model/ erase/      Phase 1 / Phase 3, empty
 ```
 
 ## Install
