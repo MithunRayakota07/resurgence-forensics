@@ -223,8 +223,12 @@ reassembly was Adroit, the commercialisation of Pal & Memon's SmartCarving. We
 tried to obtain it; the vendor no longer distributes it. So that capability is
 not commercially available today."* Do NOT claim we benchmarked against it.
 
-**4. Our test images are self-generated.** Softest part of our evidence. Fix by
-running NIST CFReDS.
+**4. Our test images are self-generated.** ~~Softest part of our evidence.~~
+**Largely closed 8 Sept — see 5g.** `tessera-gen-real` builds the same layouts
+from real photographs with other real photographs as decoy filler, and 54 of 54
+randomised out-of-order layouts recover byte-exact. What remains open: one
+camera, one resolution, one layout shape, and fragmentation chosen by our
+harness rather than by real filesystem ageing.
 
 **5. No learned component exists yet.** All current results are a hand-written
 JPEG validator plus beam search.
@@ -501,6 +505,71 @@ random or non-JPEG rather than other photographs.
 **Timings: RESOLVED 24 Aug.** Section 2, README and GUIDE have all been
 re-measured on an idle machine and updated. hard.img is 67.5 s, not 7.6 s.
 
+## 5g. Real photographs, and a success RATE (8 Sept) — threat 4 largely closed
+
+Section 5 lists "our test images are self-generated" as threat 4 and the
+softest part of the evidence. `corpus/generate/real_photos.py` addresses it:
+it lays REAL photographs out on a disk image and uses slices of OTHER real
+photographs — same camera, same encoder, same settings — as the surrounding
+decoy filler. That is the maximally confusable case, and the one 5f measures
+as unsolved when the competitor is another JPEG.
+
+**First result, 20-photo webcam corpus:** 3/3 byte-exact with correct cluster
+order and fragment count, including the out-of-order layout with a backward
+jump (86.2 s, 45.6 s, 128.9 s).
+
+**Then a rate, because 3 files is not a rate.** `bench/success_rate.py`
+randomises which photograph is the evidence, both fragmentation points, the
+start cluster, the backward-jump distance, the forward gap, and the filler
+seed, then scores each byte-exact.
+
+| corpus | image | instances | byte-exact | median carve |
+|---|---|---|---|---|
+| real webcam photos | 16 MiB | 30 | **30 / 30** | 39 s |
+| synthetic photos | 16 MiB | 12 | **12 / 12** | 57 s |
+| synthetic photos | 8 MiB | 12 | **12 / 12** | 57 s |
+
+**54 of 54 randomised out-of-order layouts recovered byte-exact.** That is a
+much stronger statement than the two hand-placed images in section 2, and it
+is the number to quote.
+
+**But there is one reproducible failure, and it is NOT explained.** The pytest
+fixture in `tests/test_real_photo_corpus.py` builds a layout that fails:
+900x700 synthetic evidence, `build_hard(..., total_clusters=2048, seed=1)`,
+five decoys. The search reaches 2503 of 2508 MCUs via a wrong 11-fragment
+assembly instead of the true 3-fragment path — the same failure shape as 5b.
+It reproduces deterministically.
+
+Three attempts to isolate the cause, all negative:
+
+1. **File size and decoy density, factorially.** 800x600 and 900x700 evidence
+   crossed with sparse synthetic filler and dense real-photo filler. All four
+   combinations pass. Neither variable explains it.
+2. **Image content.** If procedural imagery were the problem (section 6 records
+   1.4x separation for noise against 3.4x for photographic statistics), the
+   synthetic corpus should fail more. It does not — 12/12.
+3. **Image size.** 8 MiB against 16 MiB, same layouts. Not only 12/12, but the
+   candidate counts are IDENTICAL between the two runs (18085, 16209, 15495,
+   ...). The search is byte-scaled and local, so total image size does not
+   enter into it at all.
+
+So the honest position: on randomised layouts of this shape the carver is
+reliable, 54/54. A rare failure mode exists, it is reproducible, and its cause
+is unknown. Do not describe the success rate as 100% without saying that a
+known failing configuration is checked in.
+
+**Incidental finding, relevant to section 8.** Point 3 above shows per-file
+search cost is INDEPENDENT of image size — identical candidate counts on an 8
+MiB and a 16 MiB image. That does not settle runtime at scale (header scanning
+and the number of files both still scale), but it removes one of the reasons
+to fear it, and it means the naive "67.5 s per 16 MiB, therefore 100 days per
+2 TB" extrapolation is definitely wrong.
+
+**What is still NOT closed.** One camera, one resolution, one layout shape, and
+fragmentation chosen by our harness rather than produced by a real filesystem
+ageing. CFReDS is still 0/6, and nothing here changes that — what differs there
+is the layout, not the photographs.
+
 ## 6. Design lessons already learned the hard way — do not regress these
 
 Each of these came from a test that failed, and each is preserved as a comment
@@ -566,10 +635,13 @@ these, read the comment first.
 - **Publishing** (arXiv / DFRWS / FSI:DI) undecided.
 - **Runtime at scale unmeasured, and the exposure GREW.** Re-measured 24 Aug:
   **67.5 s** on a 16 MiB image, not the 7.6 s previously recorded. Naively that
-  is ~100 days for a 2 TB drive. The extrapolation is not literal — real drives
-  are mostly not JPEG scan data and the header scan prunes hard — but nobody has
-  measured it, and this is now a stronger line of attack than it was. Measuring
-  runtime on a 1 GB image is the cheapest way to close it.
+  is ~100 days for a 2 TB drive. **Partly addressed 8 Sept (see 5g):** the
+  per-file search cost does not depend on image size at all — an 8 MiB and a
+  16 MiB image produce byte-identical candidate counts, because the search
+  window is byte-scaled and local. So the naive per-byte extrapolation is
+  definitely wrong. What still scales is the header scan and the number of
+  files found, and neither has been measured. Running the carver over a 1 GB
+  image remains the cheapest way to close this properly.
 - ~~TRIM rebuttal unchecked~~ — done 23 Aug; one clause was false and is corrected in section 5.
 
 ---

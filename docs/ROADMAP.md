@@ -55,14 +55,15 @@ whether anyone ever reads the engineering.
 
 | # | step | why it matters |
 |---|---|---|
-| A1 | **Rename to Tessera** — done, 49 references across 15 files | A tessera is one tile of a mosaic; reassembling scattered tesserae is literally what the carver does. The old name read wrong and collided with a well-known LLM. |
-| A2 | **Rewrite the README** — short, one honest claim, a screenshot of the live fragment graph | The single highest-leverage item. A reviewer gives it 60 seconds. Right now they meet 245 lines and no picture. |
-| A3 | **Add MIT LICENSE** | A public repo with no licence legally means nobody may use it. |
-| A4 | **Strip SIH artifacts** — `docs/slide-wording.md`, the competition and team-rules sections, the 55%-effort cap | Dead weight that dates the project to a contest it has left. |
-| A5 | **Publish, confirm CI green, add the badge** | The badge needs the repo URL, so it comes last. |
+| A1 | **Rename to Tessera** — DONE, 49 references across 15 files | A tessera is one tile of a mosaic; reassembling scattered tesserae is literally what the carver does. The old name read wrong and collided with a well-known LLM. |
+| A2 | **Rewrite the README** — DONE | Hero screenshot, honest limits stated up front (the NIST 0/6 was previously absent from the README entirely), measured success rate. |
+| A3 | **Add MIT LICENSE** — DONE | A public repo with no licence legally means nobody may use it. |
+| A4 | **Strip SIH artifacts** — DONE | Competition brief, team rules, key dates, the 55%-effort cap and `docs/slide-wording.md` are gone. One paragraph of history stays, explaining why there are three capabilities. |
+| A5 | **Publish, confirm CI green, add the badge** | The badge needs the repo URL, so it comes last. **This is the only step left.** |
 
-Also fix while in there: the README and CLAUDE.md folder tables both still say
-`erase/` and `model/` are empty. They are full of working code.
+Done along the way: real-photograph corpus builder, a measured success rate
+(54/54 randomised out-of-order layouts), and the stale claims that `erase/` and
+`model/` were empty.
 
 ---
 
@@ -71,10 +72,18 @@ Also fix while in there: the README and CLAUDE.md folder tables both still say
 Optional, and each is independently useful. Do them after publishing, in this
 order.
 
-1. **Measure runtime on a 1 GB image.** The biggest unanswered line of attack.
-   A naive extrapolation gives ~100 days for a 2 TB drive; the real number is
-   almost certainly far better because the header scan prunes hard, but nobody
-   has measured it. Cheapest way to close the weakest point.
+0. **Find out why the known failing layout fails.** A reproducible failure is
+   checked into `tests/test_real_photo_corpus.py`, and three controlled
+   experiments — file size crossed with decoy density, image content, and image
+   size — all failed to explain it. 54 of 54 randomised layouts pass and this
+   one does not. Whatever separates them is the most interesting unanswered
+   question in the project.
+
+1. **Measure runtime on a 1 GB image.** A naive extrapolation gives ~100 days
+   for a 2 TB drive. That is now known to be wrong — per-file search cost does
+   not depend on image size at all (identical candidate counts on 8 MiB and
+   16 MiB). What still scales is the header scan and the file count, and
+   neither has been measured.
 
 2. **Error bars on the AUC study.** Currently a single seed. Repeat across
    3–5 and probe whether the DOC/XLS signal is content adjacency or just OLE
