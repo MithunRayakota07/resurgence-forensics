@@ -103,11 +103,25 @@ with slices of *other* real photographs from the same camera as the surrounding
 junk — same encoder, same settings, so competing fragments are maximally
 confusable.
 
-On a 20-photo webcam corpus: **3/3 byte-exact**, correct cluster order and
-fragment count, including the out-of-order layout.
-
 ```bash
 tessera-gen-real --src ~/Pictures --out corpus/images
+```
+
+Two hand-placed layouts are not a rate, so `tessera-success-rate` builds many
+independent ones — randomising which photograph is the evidence, where the two
+fragmentation points fall, how far the backward jump reaches, and how the
+surrounding decoy photos are arranged — and scores each byte-exact.
+
+> **30 / 30 byte-exact** over randomised three-fragment out-of-order layouts.
+> Median 39 s per carve (22–82 s), 22 minutes total.
+
+What that number does and does not cover: 20 photographs from **one camera at
+one resolution**, one layout shape, and fragmentation chosen by this harness
+rather than by a real filesystem. It is a far better claim than two hand-picked
+images, and still not a claim about disks in the wild.
+
+```bash
+tessera-success-rate --src ~/Pictures --n 30
 ```
 
 ---
