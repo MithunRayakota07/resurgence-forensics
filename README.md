@@ -156,13 +156,32 @@ web/               React + Vite UI
 model/ erase/      Phase 1 / Phase 3, empty
 ```
 
-## Running
+## Install
 
-Needs Python 3.11+, Node 18+, and WSL Ubuntu with `testdisk foremost scalpel`
-for the baselines.
+Needs Python 3.11+ and nothing else. The carver depends only on NumPy and
+Pillow.
 
 ```bash
-pip install -r requirements.txt
+pip install -e .
+```
+
+That gives you the command-line tools:
+
+```bash
+sutra-carve corpus/images/hard.img --out recovered/
+```
+
+`sutra-erase-drive`, `sutra-erase-metadata` and `sutra-erase-residue` are the
+erasure side; all three are dry-run by default and refuse anything that is not
+a regular file. `sutra-gen-corpus` rebuilds the test disk images.
+
+## Reproducing the benchmark
+
+The comparison table additionally needs Node 18+ for the UI and WSL Ubuntu with
+`testdisk foremost scalpel` — the baseline carvers are Linux-only.
+
+```bash
+pip install -e ".[api,dev]"
 npm install --prefix web
 ./run.sh
 ```

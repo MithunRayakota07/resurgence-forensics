@@ -1,0 +1,16 @@
+# Shell scripts must keep LF endings. They run under WSL, and CRLF makes bash
+# fail with "\r: command not found" — which is a confusing way to lose an hour.
+*.sh text eol=lf
+run.sh text eol=lf
+
+# Normalise everything else, but let Git decide what is text.
+* text=auto
+
+# Never touch these.
+*.img binary
+*.dd binary
+*.jpg binary
+*.png binary
+*.gif binary
+*.zip binary
+*.pdf binary

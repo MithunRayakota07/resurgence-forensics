@@ -579,12 +579,25 @@ these, read the comment first.
 
 ## 9. Running it from cold
 
-Needs **Python 3.11+**, **Node 18+**, and **WSL Ubuntu** with
-`testdisk foremost scalpel` installed (that's where the baseline carvers live;
-they are Linux-only).
+**The carver alone needs only Python 3.11+.** It is a proper installable
+package (`pyproject.toml`), and core dependencies are NumPy and Pillow:
 
 ```bash
-pip install -r requirements.txt
+pip install -e .
+sutra-carve corpus/images/hard.img --out recovered/
+```
+
+Console entry points: `sutra-carve`, `sutra-erase-drive`,
+`sutra-erase-metadata`, `sutra-erase-residue`, `sutra-gen-corpus`,
+`sutra-bench`. FastAPI/uvicorn are the `[api]` extra and pytest is `[dev]`, so
+a plain install does not drag in a web server.
+
+**Reproducing the benchmark** additionally needs **Node 18+** and **WSL
+Ubuntu** with `testdisk foremost scalpel` installed (that's where the baseline
+carvers live; they are Linux-only).
+
+```bash
+pip install -e ".[api,dev]"
 npm install --prefix web
 ./run.sh
 ```
@@ -609,8 +622,11 @@ Ports are deliberately non-default. 5173 and 8000 are what every other Vite and
 FastAPI project on a dev machine grabs, and colliding with an unrelated
 project's dev server is a confusing way to lose an evening.
 
-**Not a git repository yet.** Run `git init` before five people start touching
-this.
+**Git.** Initialised 7 Sept 2026, default branch `main`. Everything under
+`corpus/` is gitignored — it is 4.9 GB and fully reproducible (synthetic images
+from `sutra-gen-corpus`, CFReDS and govdocs1 by download). `.gitattributes`
+pins `*.sh` to LF so the shell scripts keep working under WSL on a Windows
+checkout.
 
 ---
 

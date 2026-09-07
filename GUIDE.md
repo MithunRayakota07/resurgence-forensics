@@ -41,9 +41,15 @@ wsl -d Ubuntu -u root -- bash -c "which photorec foremost scalpel"
 *Expect three paths under `/usr/bin/`.*
 
 ```bash
-pip install -r requirements.txt
+pip install -e ".[api,dev]"
 ```
-*NumPy, Pillow, FastAPI, uvicorn. Nothing exotic.*
+*Installs SUTRA itself plus its dependencies, and puts the `sutra-*` commands
+on your PATH. The `-e` means "editable" — edit a `.py` file and the installed
+command picks the change up immediately, no reinstall.*
+
+*`[api,dev]` adds FastAPI, uvicorn and pytest on top of the core NumPy and
+Pillow. Plain `pip install -e .` gets you the carver alone, which is all you
+need if you are not running the web UI or the tests.*
 
 ```bash
 npm install --prefix web

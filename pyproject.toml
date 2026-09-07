@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sutra-forensics"
+version = "0.1.0"
+description = "Fragment-reassembly file carving and SP 800-88r2 secure erasure for raw disk images"
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = ["forensics", "file-carving", "data-recovery", "secure-erase", "nist-sp-800-88"]
+
+# Core carving needs only these two. The web API, the benchmark harness and
+# the learned-adjacency experiment are all optional extras, so a plain
+# `pip install sutra-forensics` does not drag in a web server or torch.
+dependencies = [
+    "numpy>=1.26",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+# The FastAPI backend that streams the beam-search trace to the web UI.
+api = [
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+]
+# Test suite.
+dev = [
+    "pytest>=8.0",
+]
+
+[project.scripts]
+sutra-carve = "carve.carver:main"
+sutra-erase-drive = "erase.drive:main"
+sutra-erase-metadata = "erase.metadata:main"
+sutra-erase-residue = "erase.wipe_residue:main"
+sutra-gen-corpus = "corpus.generate.synthetic:main"
+sutra-bench = "bench.report:main"
+
+[tool.setuptools]
+# Listed explicitly rather than auto-discovered: the repo root also holds
+# corpus data directories and web/, which are not Python packages.
+packages = [
+    "carve",
+    "carve.priors",
+    "carve.validators",
+    "erase",
+    "model",
+    "bench",
+    "corpus",
+    "corpus.generate",
+    "api",
+]
