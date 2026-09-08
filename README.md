@@ -50,6 +50,12 @@ Stated here rather than buried, because you would find it anyway:
   conventional carvers take under two. Runtime at scale is unmeasured.
 - **Baseline JPEG only.** Progressive JPEG is rejected explicitly rather than
   silently mis-decoded.
+- **It can report success on a wrong reconstruction.** Measured on CFReDS:
+  `oak-snow.jpg` returns `ok=True`, decodes every one of its 19,602 MCUs and
+  lands on the end-of-image marker, yet the file is wrong — eight fragments
+  instead of two, and 86 clusters belonging to a different image. The benchmark
+  catches it by comparing hashes; a real case has no original to compare
+  against. **Treat a success flag as a hypothesis, not a verdict.**
 - **Confidence scores are uncalibrated.** `0.99` does not mean "99% of such
   files are byte-exact". Every surface that displays it says so.
 - **Erasure never touches physical hardware.** ATA Secure Erase, NVMe Sanitize

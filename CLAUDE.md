@@ -615,6 +615,74 @@ fragmentation chosen by our harness rather than produced by a real filesystem
 ageing. CFReDS is still 0/6, and nothing here changes that — what differs there
 is the layout, not the photographs.
 
+## 5h. H1 (joint multi-file assembly) is DEAD — measured 8 Sept
+
+Section 5b proposed H1: carve all files simultaneously so every cluster belongs
+to at most one file, on the theory that a wrong assembly survives only because
+it is free to consume clusters that truly belong to another file. Make those
+clusters unavailable and the Frankenstein path should disappear.
+
+**Tested before building. The premise is false.** `bench/ownership.py` carves a
+CFReDS file, then classifies every cluster the search chose against ground
+truth: does it belong to this file, to another file, or to nobody?
+
+| file | own clusters | another file | filler | first wrong pick owned by |
+|---|---|---|---|---|
+| jump.jpg | 3862 (98.8%) | 48 (1.2%) | 0 | **itself** |
+| oak-snow.jpg | 2649 (96.9%) | 86 (3.1%) | 0 | **itself** |
+| leaf.jpg | 1553 (99.8%) | 3 (0.2%) | 0 | **itself** |
+| stonehenge.jpg | 2411 (99.9%) | 2 (0.1%) | 0 | **itself** |
+
+Every wrong assembly is built almost entirely from the file's OWN clusters, put
+in the wrong order. There is no filler in any of them. And in all four cases
+the FIRST divergence from the true path selects a cluster that the same file
+owns.
+
+An exclusivity constraint cannot repair intra-file misordering. **Do not build
+H1.** If someone proposes it again, point them here.
+
+Note also that this image is 94% owned — 22,720 of 24,238 clusters belong to
+one of the six files — so there was very little filler for exclusion to remove
+even in principle.
+
+**What the failure actually is: massive over-fragmentation.** The search
+returns far more fragments than exist:
+
+| file | true fragments | fragments found |
+|---|---|---|
+| jump.jpg | 2 | 8 |
+| oak-snow.jpg | 2 | 8 |
+| stonehenge.jpg | 2 | 20 |
+| leaf.jpg | 4 | 24 |
+
+It reaches 19601 or 32999 of the required MCUs — one or two short — by
+stitching the right file's clusters into many small pieces. Whatever fixes
+this has to act on fragment COUNT or run length, not on cluster ownership.
+Note that section 5d already showed raising `W_PRIOR` does not do it: the gap
+prior is not the same instrument as a per-boundary cost.
+
+### The serious part: a SILENT FALSE POSITIVE
+
+**`oak-snow.jpg` returned `ok=True`, reason "complete", 19602/19602 MCUs — and
+the reconstruction is wrong.** 2735 clusters against a true 2677, eight
+fragments against two, and 86 clusters taken from stonehenge.jpg.
+
+`bench/score.py` catches it because it compares SHA-256 against the original.
+**In a real case there is no original.** At runtime this tool would hand an
+investigator a file, report success, and attach a high confidence number.
+
+That is a different and worse class of problem than "the confidence score is
+uncalibrated". Uncalibrated means the number is not a probability. This means
+the SUCCESS FLAG ITSELF is unreliable. Any claim that the tool knows when it
+has succeeded is currently false, and the README's limitations section should
+say so in those words.
+
+Reproduce with:
+
+```bash
+python bench/ownership.py oak-snow.jpg
+```
+
 ## 6. Design lessons already learned the hard way — do not regress these
 
 Each of these came from a test that failed, and each is preserved as a comment

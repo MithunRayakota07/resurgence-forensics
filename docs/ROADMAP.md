@@ -72,12 +72,25 @@ Done along the way: real-photograph corpus builder, a measured success rate
 Optional, and each is independently useful. Do them after publishing, in this
 order.
 
-0. **Find out why the known failing layout fails.** A reproducible failure is
+0. **Make the success flag trustworthy.** This is now the top priority and it
+   outranks accuracy. `oak-snow.jpg` on CFReDS returns `ok=True` with every MCU
+   decoded and a clean end-of-image marker, and the file is still wrong (see
+   CLAUDE.md 5h). A carver that cannot tell when it has failed is dangerous in a
+   way that a carver which simply fails is not. Either find a runtime signal
+   that separates the two, or stop reporting a boolean and report evidence.
+
+0b. **Find out why the known failing layout fails.** A reproducible failure is
    checked into `tests/test_real_photo_corpus.py`, and three controlled
    experiments — file size crossed with decoy density, image content, and image
    size — all failed to explain it. 54 of 54 randomised layouts pass and this
-   one does not. Whatever separates them is the most interesting unanswered
-   question in the project.
+   one does not.
+
+~~**Joint multi-file assembly (H1).**~~ **Dead — measured 8 Sept, see CLAUDE.md
+   5h.** Wrong assemblies are 97–99.9% built from the file's own clusters with
+   zero filler, and the first wrong pick is always a cluster the file owns.
+   Exclusivity has nothing to constrain. The real failure is over-fragmentation
+   (2 true fragments returned as 8–24), which needs a per-boundary cost, not an
+   ownership constraint.
 
 1. **Measure runtime on a 1 GB image.** A naive extrapolation gives ~100 days
    for a 2 TB drive. That is now known to be wrong — per-file search cost does
