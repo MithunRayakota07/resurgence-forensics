@@ -683,6 +683,76 @@ Reproduce with:
 python bench/ownership.py oak-snow.jpg
 ```
 
+## 5i. No current runtime signal detects the false positive (9 Sept)
+
+Following 5h, the question was whether any signal already computed separates a
+correct reconstruction from a wrong one. `bench/selfaware.py` carves cases whose
+ground truth we hold, records the runtime feature vector, and labels correct or
+incorrect only afterwards. Ground truth is never an input.
+
+**The first run looked like a win and was confounded.** Every correct carve in
+it was 16-40 clusters; the false positive is 2735. Four features showed a
+"clean split" that was really just file size.
+
+**The control that fixed it:** CFReDS ships `image-contig-jpg.dd` — the SAME six
+photographs, same encoder, laid out contiguously. All six carve byte-exact, at
+1559-6690 clusters. That gives large CORRECT carves to compare against the
+large WRONG one.
+
+With the control included, 23 carves — 17 correct, 5 correctly-flagged
+failures, 1 false positive:
+
+| feature | correct (min..max) | false positive | separates? |
+|---|---|---|---|
+| `mean_run_length` | 5.67 .. 6690.0 | 341.9 | **no** |
+| `score_per_cluster` | -39.06 .. -0.25 | -31.79 | **no** |
+| `fragments_per_100_clusters` | 0.015 .. 17.65 | 0.293 | **no** |
+| `candidates_per_cluster` | 0.99 .. 473.0 | 37.06 | **no** |
+| `confidence` | 0.99 | 0.99 | **no** |
+| `mcu_completeness` | 1.0 | 1.0 | **no** |
+| `n_fragments` | 1 .. 3 | 8 | *apparently — but see below* |
+
+**`n_fragments` is an artefact, do not use it.** Every correct carve we hold is
+low-fragmentation: the contiguous controls are 1 fragment and the synthetic and
+real-photo layouts are 2-3. We have NO correct carve above 3 fragments, because
+`leaf.jpg` genuinely has 4 and we fail it. So "8 fragments means wrong" has
+never been tested against a genuinely 8-fragment file, and thresholding on it
+would just cap fragment count — which breaks recovery of exactly the heavily
+fragmented files this tool exists for.
+
+**Conclusion: the success flag cannot be repaired by re-thresholding existing
+signals.** Everything currently computed describes whether the SEARCH
+TERMINATED, not whether the ANSWER IS RIGHT. A correct-looking termination and
+a correct reconstruction are, on these measurements, indistinguishable.
+
+### What this points at
+
+The fix needs a signal that is INDEPENDENT of the search — something that can
+disagree with it. Section 5d parked EXIF-thumbnail scoring as "real idea, wrong
+project" because it was framed as a way to improve search SCORING, where it is
+published prior art (Abdullah, Ibrahim & Mohamad 2013) and therefore not a
+contribution.
+
+**As a VERIFICATION signal it is a different proposition.** The embedded
+thumbnail is an absolute reference to what the image should look like, encoded
+independently of the entropy stream the search walks. Decode the finished
+reconstruction, downsample, compare to the thumbnail: that answers "is this the
+right picture?" rather than "did the search finish?". Using published prior art
+as a verifier while claiming nothing novel about it is entirely legitimate.
+
+Caveats already known from 5d: only 3 of 6 CFReDS files carry a thumbnail, and
+a first probe was confounded by EXIF rotation. **Check whether oak-snow.jpg —
+the actual false positive — has one, before building anything.** If it does not,
+this route cannot fix the case we have.
+
+Reproduce:
+
+```bash
+python bench/selfaware.py --real-src ~/Pictures --real-n 8   # small + fragmented
+python bench/selfaware.py --contig --skip-small --skip-cfreds \
+       --out bench/out/selfaware_contig.json                 # the size control
+```
+
 ## 6. Design lessons already learned the hard way — do not regress these
 
 Each of these came from a test that failed, and each is preserved as a comment

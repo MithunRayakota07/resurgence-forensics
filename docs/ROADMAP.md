@@ -72,12 +72,25 @@ Done along the way: real-photograph corpus builder, a measured success rate
 Optional, and each is independently useful. Do them after publishing, in this
 order.
 
-0. **Make the success flag trustworthy.** This is now the top priority and it
+0. **Make the success flag trustworthy.** Still the top priority, and it
    outranks accuracy. `oak-snow.jpg` on CFReDS returns `ok=True` with every MCU
    decoded and a clean end-of-image marker, and the file is still wrong (see
    CLAUDE.md 5h). A carver that cannot tell when it has failed is dangerous in a
-   way that a carver which simply fails is not. Either find a runtime signal
-   that separates the two, or stop reporting a boolean and report evidence.
+   way that a carver which simply fails is not.
+
+   **Narrowed 9 Sept (CLAUDE.md 5i):** no signal currently computed separates
+   the false positive from correct carves. Run length, score per cluster,
+   fragment density, candidate count, confidence and MCU completeness all
+   overlap once large *correct* carves are in the sample. The apparent
+   `n_fragments` split is an artefact of having no correct carve above three
+   fragments.
+
+   So the next step is a signal INDEPENDENT of the search. The candidate is the
+   embedded EXIF thumbnail used as a *verifier* rather than as search scoring —
+   an absolute reference for what the picture should look like. First check,
+   before building anything: does `oak-snow.jpg` even carry a thumbnail? Only
+   three of the six CFReDS files do. If it does not, this route cannot fix the
+   case in hand.
 
 0b. **Find out why the known failing layout fails.** A reproducible failure is
    checked into `tests/test_real_photo_corpus.py`, and three controlled
