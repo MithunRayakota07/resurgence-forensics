@@ -1,4 +1,4 @@
-# Tessera — the guide
+# Resurgence — the guide
 
 For a new teammate. Assumes you can code but have never touched digital
 forensics. Every specialist word is explained the first time it appears, and
@@ -43,7 +43,7 @@ wsl -d Ubuntu -u root -- bash -c "which photorec foremost scalpel"
 ```bash
 pip install -e ".[api,dev]"
 ```
-*Installs Tessera itself plus its dependencies, and puts the `tessera-*` commands
+*Installs Resurgence itself plus its dependencies, and puts the `resurgence-*` commands
 on your PATH. The `-e` means "editable" — edit a `.py` file and the installed
 command picks the change up immediately, no reinstall.*
 

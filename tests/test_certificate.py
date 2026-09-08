@@ -22,7 +22,7 @@ def _body(**over):
         operator="test operator",
         method="clear",
         technique="overwrite",
-        tool="Tessera",
+        tool="Resurgence",
         tool_version="0.1.0",
         verification="full read-back",
         validation_verdict="APPROVE",

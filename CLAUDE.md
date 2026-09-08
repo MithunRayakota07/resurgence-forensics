@@ -1,4 +1,4 @@
-# CLAUDE.md — Tessera project memory
+# CLAUDE.md — Resurgence project memory
 
 This file is the project's memory. If you are a new teammate, or a fresh AI
 session, read this before touching anything. It should give you the full
@@ -45,7 +45,7 @@ superseded. Do not quote 7.6 s or 16.1 s anywhere.
 
 | tool | byte-exact | time | result |
 |---|---|---|---|
-| **Tessera** | **1 / 1** | **67.5 s** | byte-exact |
+| **Resurgence** | **1 / 1** | **67.5 s** | byte-exact |
 | PhotoRec + brute force | 0 / 1 | 1.6 s | nothing recovered |
 | PhotoRec (default) | 0 / 1 | 1.4 s | nothing recovered |
 | Foremost | 0 / 1 | 0.9 s | corrupt, SSIM 0.59 |
@@ -55,7 +55,7 @@ superseded. Do not quote 7.6 s or 16.1 s anywhere.
 
 | tool | byte-exact | time |
 |---|---|---|
-| **Tessera** | **2 / 2** | **118.2 s** |
+| **Resurgence** | **2 / 2** | **118.2 s** |
 | PhotoRec + brute force | 1 / 2 | 257.9 s |
 | PhotoRec (default) | 0 / 2 | 1.6 s |
 | Foremost | 0 / 2 | 14.7 s |
@@ -112,7 +112,41 @@ shortest path — for image jigsaws.
 **Out-of-order carving is NOT ours.** Huijsmans, Kuijsten, Jonker & van Beek,
 *"How to Carve Out-of-Order Fragmented Files,"* LNCS 16365, Springer, **2026**.
 They also built the tunable fragmentation corpus generator. **We position
-against their stated open problem: efficiency in practical settings.**
+against their stated open problem: efficiency in practical settings.** Their
+empirical case is stronger than the wording we used to use: across 220 in-use
+Windows laptops, **nearly half** of fragmented files were out of order. Say
+"nearly half", not "a significant portion" — the real number is better for us.
+
+**Fragmented-JPEG carving has a lineage we were missing (added 8 Sept).**
+Ali, Mohamad et al., `myKarve` / `X_myKarve` / `RX_myKarve` (2015-2019):
+fragmented AND intertwined JPEG images, binary-search fragmentation-point
+detection, and in RX_myKarve machine learning plus evolutionary algorithms in
+reassembly. Also `JPGcarve`, and van der Meer et al., *"Recovery of heavily
+fragmented JPEG files"* (DFRWS 2016). **None of these were in this section
+before and they are the closest prior work there is.** Read them before making
+any novelty claim about fragmented JPEG carving.
+
+**Scalpel3 is concurrent work and it overlaps most of our carver.** Waguespack,
+Richard III et al., *"Scalpel3: A High-Performance Data Carving Architecture for
+Recovery of Fragmented Files"*, arXiv **2608.20363**, June/Aug 2026 — Golden G.
+Richard III wrote the ORIGINAL Scalpel, so this is not a fringe paper. It does
+out-of-order block placement, JPEG validation by Huffman-decoding one MCU at a
+time, reassembly heuristics informed by locality and file structure, learned
+models via ONNX, and byte-exact ground-truth scoring, over 80,000+ files.
+
+That is: our headline case, our hard constraint, our allocation prior, the
+direction we were heading, and our scoring discipline — at roughly a thousand
+times our evaluation scale.
+
+What survives the comparison: Scalpel3's stated gap is that "no publicly
+available, format-agnostic, high-performance framework exists in which
+researchers can develop and deploy new fragmented recovery strategies". Its
+contribution is *architecture and throughput*, not a specific reassembly
+objective. Ours is a specific objective with an ablation. And 5f — the measured
+collapse of the DFRWS-2024 guarantee against real competitors — is not reported
+anywhere we can find, including in Scalpel3.
+
+**Do not describe out-of-order carving as an open gap.** It is not, as of 2026.
 
 **Allocation priors are NOT wholly ours.** Karresand, Dyrkolbotn & Axelsson
 published three papers in 2019–2020 on NTFS cluster allocation behaviour,
@@ -124,10 +158,21 @@ explicitly naming file carving as an application. Our narrower true claim:
 
 **What IS ours — and it is SPLIT BY FORMAT. Do not state it unqualified.**
 
-Nobody learns adjacency over raw binary disk fragments. Confirmed across open
-source — FiFTy (classification only), FileScraper (Huffman table extraction),
-JPEG-Restorer (syntactic + thumbnail affinity), JigsawNet and Deepzzle (pixels,
-not bytes). None do it. But we only claim it where we measured it working:
+Nobody learns PAIRWISE ADJACENCY between raw binary disk fragments. Confirmed
+across open source — FiFTy (classification only), FileScraper (Huffman table
+extraction), JPEG-Restorer (syntactic + thumbnail affinity), JigsawNet and
+Deepzzle (pixels, not bytes).
+
+**Two near-misses found 8 Sept — state the claim narrowly or it is wrong.**
+Lee, Eimon, Srinivasan & Kalva, *"Byte-level generative predictions for
+forensics multimedia carving"* (arXiv 2604.11010, April 2026) applies bGPT, a
+byte-level transformer, to carving — but as NEXT-BYTE PREDICTION on
+uncompressed BMP, not adjacency between fragments. And RX_myKarve puts learning
+inside JPEG reassembly without framing it as an adjacency model. Neither kills
+the claim, but "nobody applies learning to carving" would now be false. Say
+"pairwise adjacency between raw binary fragments" every time.
+
+We only claim it where we measured it working:
 
 | data | our contribution | measured |
 |---|---|---|
@@ -224,7 +269,7 @@ tried to obtain it; the vendor no longer distributes it. So that capability is
 not commercially available today."* Do NOT claim we benchmarked against it.
 
 **4. Our test images are self-generated.** ~~Softest part of our evidence.~~
-**Largely closed 8 Sept — see 5g.** `tessera-gen-real` builds the same layouts
+**Largely closed 8 Sept — see 5g.** `resurgence-gen-real` builds the same layouts
 from real photographs with other real photographs as decoy filler, and 54 of 54
 randomised out-of-order layouts recover byte-exact. What remains open: one
 camera, one resolution, one layout shape, and fragmentation chosen by our
@@ -237,7 +282,7 @@ JPEG validator plus beam search.
 
 ## 5b. The NIST result (23 Aug) — read this before touching the carver
 
-**Tessera scores 0 / 6 byte-exact on the NIST CFReDS fragmented-JPG image.**
+**Resurgence scores 0 / 6 byte-exact on the NIST CFReDS fragmented-JPG image.**
 Our own images still pass byte-exact. Both facts matter.
 
 **Update 23 Aug (second attempt).** Still 0/6, but the failure changed shape and
@@ -653,12 +698,12 @@ package (`pyproject.toml`), and core dependencies are NumPy and Pillow:
 
 ```bash
 pip install -e .
-tessera-carve corpus/images/hard.img --out recovered/
+resurgence-carve corpus/images/hard.img --out recovered/
 ```
 
-Console entry points: `tessera-carve`, `tessera-erase-drive`,
-`tessera-erase-metadata`, `tessera-erase-residue`, `tessera-gen-corpus`,
-`tessera-bench`. FastAPI/uvicorn are the `[api]` extra and pytest is `[dev]`, so
+Console entry points: `resurgence-carve`, `resurgence-erase-drive`,
+`resurgence-erase-metadata`, `resurgence-erase-residue`, `resurgence-gen-corpus`,
+`resurgence-bench`. FastAPI/uvicorn are the `[api]` extra and pytest is `[dev]`, so
 a plain install does not drag in a web server.
 
 **Tests.** `pip install -e ".[dev]"`, then:
@@ -705,7 +750,7 @@ project's dev server is a confusing way to lose an evening.
 
 **Git.** Initialised 7 Sept 2026, default branch `main`. Everything under
 `corpus/` is gitignored — it is 4.9 GB and fully reproducible (synthetic images
-from `tessera-gen-corpus`, CFReDS and govdocs1 by download). `.gitattributes`
+from `resurgence-gen-corpus`, CFReDS and govdocs1 by download). `.gitattributes`
 pins `*.sh` to LF so the shell scripts keep working under WSL on a Windows
 checkout.
 

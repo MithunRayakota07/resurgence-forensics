@@ -71,7 +71,7 @@ jobs:
         run: pip install -e ".[dev]"
 
       - name: Generate the benchmark disk images
-        run: tessera-gen-corpus
+        run: resurgence-gen-corpus
 
       - name: Decoder self-test
         run: python bench/test_decoder.py
@@ -107,4 +107,4 @@ jobs:
         run: |
           python -m venv /tmp/fresh
           /tmp/fresh/bin/pip install dist/*.whl
-          /tmp/fresh/bin/tessera-carve --help
+          /tmp/fresh/bin/resurgence-carve --help

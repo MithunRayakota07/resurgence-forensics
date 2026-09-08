@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "tessera-forensics"
+name = "resurgence-forensics"
 version = "0.1.0"
 description = "Fragment-reassembly file carving and SP 800-88r2 secure erasure for raw disk images"
 readme = "README.md"
@@ -15,7 +15,7 @@ keywords = ["forensics", "file-carving", "data-recovery", "secure-erase", "nist-
 
 # Core carving needs only these two. The web API, the benchmark harness and
 # the learned-adjacency experiment are all optional extras, so a plain
-# `pip install tessera-forensics` does not drag in a web server or torch.
+# `pip install resurgence-forensics` does not drag in a web server or torch.
 dependencies = [
     "numpy>=1.26",
     "pillow>=10.0",
@@ -37,14 +37,14 @@ dev = [
 ]
 
 [project.scripts]
-tessera-carve = "carve.carver:main"
-tessera-erase-drive = "erase.drive:main"
-tessera-erase-metadata = "erase.metadata:main"
-tessera-erase-residue = "erase.wipe_residue:main"
-tessera-gen-corpus = "corpus.generate.synthetic:main"
-tessera-gen-real = "corpus.generate.real_photos:main"
-tessera-success-rate = "bench.success_rate:main"
-tessera-bench = "bench.report:main"
+resurgence-carve = "carve.carver:main"
+resurgence-erase-drive = "erase.drive:main"
+resurgence-erase-metadata = "erase.metadata:main"
+resurgence-erase-residue = "erase.wipe_residue:main"
+resurgence-gen-corpus = "corpus.generate.synthetic:main"
+resurgence-gen-real = "corpus.generate.real_photos:main"
+resurgence-success-rate = "bench.success_rate:main"
+resurgence-bench = "bench.report:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

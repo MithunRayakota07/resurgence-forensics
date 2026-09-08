@@ -55,7 +55,7 @@ whether anyone ever reads the engineering.
 
 | # | step | why it matters |
 |---|---|---|
-| A1 | **Rename to Tessera** — DONE, 49 references across 15 files | A tessera is one tile of a mosaic; reassembling scattered tesserae is literally what the carver does. The old name read wrong and collided with a well-known LLM. |
+| A1 | **Rename to Resurgence** — DONE | Named twice: SUTRA read badly aloud and collided with a well-known LLM; Tessera was an interim choice. Resurgence is what the project has always been called informally, and renaming before the first push costs nothing. |
 | A2 | **Rewrite the README** — DONE | Hero screenshot, honest limits stated up front (the NIST 0/6 was previously absent from the README entirely), measured success rate. |
 | A3 | **Add MIT LICENSE** — DONE | A public repo with no licence legally means nobody may use it. |
 | A4 | **Strip SIH artifacts** — DONE | Competition brief, team rules, key dates, the 55%-effort cap and `docs/slide-wording.md` are gone. One paragraph of history stays, explaining why there are three capabilities. |

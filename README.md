@@ -1,4 +1,4 @@
-# Tessera
+# Resurgence
 
 **Recover files that should not be gone. Destroy files that should be. Prove both.**
 
@@ -6,15 +6,15 @@ A forensic toolkit for raw disk images. Its carver reassembles files whose
 fragments are stored **out of order** on disk — the case where conventional
 carvers return a corrupt file or nothing at all.
 
-![Tessera recovering a three-fragment JPEG that other carvers cannot](docs/images/recovery.png)
+![Resurgence recovering a three-fragment JPEG that other carvers cannot](docs/images/recovery.png)
 
 *One JPEG in three fragments with a backward jump. Foremost and Scalpel return
-corrupt files; PhotoRec returns nothing; Tessera returns the original byte for
+corrupt files; PhotoRec returns nothing; Resurgence returns the original byte for
 byte.*
 
 ```bash
 pip install -e .
-tessera-carve disk.img --out recovered/
+resurgence-carve disk.img --out recovered/
 ```
 
 ---
@@ -69,7 +69,7 @@ baseline. Reproduce with `./run.sh`.
 
 | tool | byte-exact | time | result |
 |---|---|---|---|
-| **Tessera** | **1 / 1** | 32.5 s | **byte-exact** |
+| **Resurgence** | **1 / 1** | 32.5 s | **byte-exact** |
 | PhotoRec + brute force | 0 / 1 | 0.6 s | nothing recovered |
 | PhotoRec (default) | 0 / 1 | 0.5 s | nothing recovered |
 | Foremost | 0 / 1 | 3.5 s | corrupt, ssim 0.59 |
@@ -79,7 +79,7 @@ baseline. Reproduce with `./run.sh`.
 
 | tool | byte-exact | time |
 |---|---|---|
-| **Tessera** | **2 / 2** | 91.9 s |
+| **Resurgence** | **2 / 2** | 91.9 s |
 | PhotoRec + brute force | 1 / 2 | 155.3 s |
 | Foremost | 0 / 2 | 8.9 s |
 | PhotoRec (default) | 0 / 2 | 1.0 s |
@@ -98,16 +98,16 @@ ranged 32.5–75.7 s for identical work. Treat single timings as indicative.
 ### Real photographs
 
 The images above are generated, which was long the softest part of this
-evidence. `tessera-gen-real` builds the same layouts from real photographs,
+evidence. `resurgence-gen-real` builds the same layouts from real photographs,
 with slices of *other* real photographs from the same camera as the surrounding
 junk — same encoder, same settings, so competing fragments are maximally
 confusable.
 
 ```bash
-tessera-gen-real --src ~/Pictures --out corpus/images
+resurgence-gen-real --src ~/Pictures --out corpus/images
 ```
 
-Two hand-placed layouts are not a rate, so `tessera-success-rate` builds many
+Two hand-placed layouts are not a rate, so `resurgence-success-rate` builds many
 independent ones — randomising which photograph is the evidence, where the two
 fragmentation points fall, how far the backward jump reaches, and how the
 surrounding decoy photos are arranged — and scores each byte-exact.
@@ -121,7 +121,7 @@ rather than by a real filesystem. It is a far better claim than two hand-picked
 images, and still not a claim about disks in the wild.
 
 ```bash
-tessera-success-rate --src ~/Pictures --n 30
+resurgence-success-rate --src ~/Pictures --n 30
 ```
 
 ---
@@ -199,9 +199,9 @@ Python 3.11+. The carver depends only on NumPy, Pillow and PyNaCl.
 pip install -e .
 ```
 
-Commands: `tessera-carve`, `tessera-erase-drive`, `tessera-erase-metadata`,
-`tessera-erase-residue`, `tessera-gen-corpus`, `tessera-gen-real`,
-`tessera-bench`, `tessera-success-rate`. The erasure commands are dry-run by
+Commands: `resurgence-carve`, `resurgence-erase-drive`, `resurgence-erase-metadata`,
+`resurgence-erase-residue`, `resurgence-gen-corpus`, `resurgence-gen-real`,
+`resurgence-bench`, `resurgence-success-rate`. The erasure commands are dry-run by
 default and refuse anything that is not a regular file.
 
 ## Tests
@@ -258,7 +258,29 @@ problem and solved it greedily. Learned adjacency plus shortest path exists for
 **Out-of-order carving is not ours.** Huijsmans, Kuijsten, Jonker & van Beek,
 *"How to Carve Out-of-Order Fragmented Files"*, LNCS 16365, Springer, 2026.
 Their stated open problem — *efficiency in practical settings* — is what this
-targets.
+targets. They also report the empirical case for it: across 220 in-use Windows
+laptops, **nearly half** of fragmented files were fragmented out of order.
+
+**Fragmented JPEG carving has an established lineage, and it is not ours
+either.** Ali, Mohamad et al. built `myKarve`, `X_myKarve` and `RX_myKarve`
+(2015–2019) for fragmented and *intertwined* JPEG images, with a binary-search
+fragmentation-point detector and, in the last of them, machine learning and
+evolutionary algorithms in the reassembly stage. `JPGcarve` and van der Meer et
+al.'s *"Recovery of heavily fragmented JPEG files"* (DFRWS 2016) attack the same
+problem. Anyone claiming novelty in fragmented JPEG carving has to get past
+these first.
+
+**Concurrent work that overlaps substantially.** Waguespack, Richard III et al.,
+*"Scalpel3: A High-Performance Data Carving Architecture for Recovery of
+Fragmented Files"*, arXiv 2608.20363, 2026 — from the author of the original
+Scalpel. It covers out-of-order block placement, JPEG validation by
+Huffman-decoding one MCU at a time, reassembly heuristics informed by locality
+and file structure, and learned models integrated via ONNX, evaluated over
+80,000+ files. That is most of what this project's carver does, at far greater
+scale. Its stated contribution is an extensible high-performance *architecture*
+rather than a specific reassembly objective, which is where the distinction
+lies — but the overlap is real and should be read before anyone claims a gap
+that no longer exists.
 
 **The fragmentation-point validator is not ours.** Van der Meer, van den Bos,
 Jonker & Dassen, *"Problem solved: a reliable, deterministic method for JPEG
@@ -271,9 +293,15 @@ an application. The narrower true claim: they use allocation behaviour to
 prioritise *where* to search; here it is a fitted pairwise gap likelihood inside
 the sequencing objective, with an ablation showing what it is worth.
 
-**What is measured here.** No open-source or published system learns adjacency
-over raw binary disk fragments — checked against FiFTy, FileScraper,
-JPEG-Restorer, JigsawNet and Deepzzle. But the claim is only made where it was
+**What is measured here.** The narrow claim is that no system learns *pairwise
+adjacency between raw binary disk fragments* — checked against FiFTy
+(classification only), FileScraper, JPEG-Restorer, JigsawNet and Deepzzle
+(pixels, not bytes). Two pieces of adjacent work come close and should be read
+alongside it: Lee et al., *"Byte-level generative predictions for forensics
+multimedia carving"* (arXiv 2604.11010, 2026) applies a byte-level transformer
+to carving, but as *next-byte prediction* on uncompressed BMP rather than
+fragment adjacency; and `RX_myKarve` uses learning inside JPEG reassembly
+without framing it as an adjacency model. The claim is only made where it was
 measured working:
 
 - **Documents and spreadsheets** — learned adjacency works. XLS 0.838, DOC 0.799

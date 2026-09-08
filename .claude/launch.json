@@ -2,13 +2,13 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "tessera-api",
+      "name": "resurgence-api",
       "runtimeExecutable": "python",
       "runtimeArgs": ["-m", "uvicorn", "api.main:app", "--host", "127.0.0.1", "--port", "8781"],
       "port": 8781
     },
     {
-      "name": "tessera-web",
+      "name": "resurgence-web",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "web"],
       "port": 5183

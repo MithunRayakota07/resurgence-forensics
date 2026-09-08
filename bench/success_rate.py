@@ -28,7 +28,7 @@ written incrementally, so a long run is still useful if interrupted.
 
 Usage
 -----
-    tessera-success-rate --src "C:/Users/me/Pictures" --n 30
+    resurgence-success-rate --src "C:/Users/me/Pictures" --n 30
 """
 
 from __future__ import annotations
